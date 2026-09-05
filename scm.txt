@@ -1,3 +1,12 @@
+///////////////////////////////////////////////////////////////////////
+//                               SCM                                 //
+///////////////////////////////////////////////////////////////////////
+
+
+///////////////////////////////////////////////////////////////////////
+// GIT 
+///////////////////////////////////////////////////////////////////////
+
 echo "# ZIG_DEMO_001" >> README.md
 git init
 git add *
@@ -5,3 +14,63 @@ git commit -m "first commit"
 git branch -M main
 git remote add origin https://github.com/aperezNWO/ZIG_DEMO_001.git
 git push -u origin main
+
+///////////////////////////////////////////////////////////////////////
+--[_] Toolchain Installation & Commands
+///////////////////////////////////////////////////////////////////////
+
+    --[_] Install Zig Extension for Visual Studio Code.
+
+    --[_] Install Zig: Download the latest stable Zig release from the official website or via package managers (e.g., winget install Zig.Zig on Windows or brew install zig on macOS).
+
+    --[_] Initialize Project: Run zig init in an empty folder to generate build.zig and build.zig.zon.
+
+            --[_] zig init
+
+    --[_] Build Project: Run zig build to compile the application executable into the zig-out/ directory.
+
+            --[_] zig build
+
+    --[_]  Run Project: Execute zig build run to start the compiled server binary.
+
+            --[_] zig build run
+
+///////////////////////////////////////////////////////////////////////
+--[_] LOCAL TEST (powershell)
+///////////////////////////////////////////////////////////////////////
+
+--[_] curl.exe "http://localhost:8080/api/fractals/generate?kind=1&xMin=-2.0&xMax=1.0&yMin=-1.5&yMax=1.5&maxIterations=500"
+
+///////////////////////////////////////////////////////////////////////
+--[_] DOCKER
+///////////////////////////////////////////////////////////////////////
+
+# Build the container image:
+
+--[_] docker build -t zig_demo_001:latest .
+
+# Tag for your registry (replace 'yourusername' with your account name)
+--[_] docker tag zig_demo_001:latest apereznwogmail/zig_demo_001:latest
+
+# Log in to your container registry
+--[_] docker login
+
+# Push the image
+--[_] docker push apereznwogmail/zig_demo_001:latest
+
+///////////////////////////////////////////////////////////////////////
+--[_] render publish / cron job
+///////////////////////////////////////////////////////////////////////
+
+--[_] docker.io/apereznwogmail/zig_demo_001:latest
+
+--[_] https://zig-demo-001-latest.onrender.com
+
+///////////////////////////////////////////////////////////////////////
+--[_] REMOTE TEST (powershell)
+///////////////////////////////////////////////////////////////////////
+
+
+--[_] curl.exe "https://zig-demo-001-latest.onrender.com/api/fractals/generate?kind=1&xMin=-2.0&xMax=1.0&yMin=-1.5&yMax=1.5&maxIterations=500"
+
+///////////////////////////////////////////////////////////////////////    
