@@ -121,10 +121,10 @@ fn handleDefault(_: std.mem.Allocator, _: []const u8, request: *std.http.Server.
 }
 const routes = [_]RouteHandler{
     .{ .path = "/api/fractals/generate", .handler = handleFractals },
-    .{ .path = "/api/zigversion", .handler = handleZigVersion },
-    .{ .path = "/api/zigVersion", .handler = handleZigVersion },
-    .{ .path = "/api/webserverversion", .handler = handleWebServerVersion },
-    .{ .path = "/api/webServerVersion", .handler = handleWebServerVersion },
+    .{ .path = "/api/getzigversion", .handler = handleZigVersion },
+    .{ .path = "/api/getZigVersion", .handler = handleZigVersion },
+    .{ .path = "/api/getzigwebserverVersion", .handler = handleWebServerVersion },
+    .{ .path = "/api/getZigWebServerVersion", .handler = handleWebServerVersion },
     .{ .path = "/api/generaterandomvertex_springboot", .handler = handleRandomVertex },
     .{ .path = "/api/GenerateRandomVertex_SpringBoot", .handler = handleRandomVertex },
     .{ .path = "/ping", .handler = handlePing },

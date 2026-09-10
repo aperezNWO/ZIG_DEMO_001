@@ -18,7 +18,12 @@ pub const AlgorithmManager = struct {
             vertex_y[i] = @as(i32, @intCast(i + 1));
         }
 
-        var prng = std.Random.DefaultPrng.init(42);
+        const SeedGen = struct {
+            var counter: u64 = 0;
+        };
+        SeedGen.counter +%= 1;
+        const seed = SeedGen.counter +% @intFromPtr(&SeedGen.counter);
+        var prng = std.Random.DefaultPrng.init(seed);
         const rand = prng.random();
 
         fisherYates(vertex_x, rand);
