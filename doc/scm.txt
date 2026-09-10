@@ -41,6 +41,12 @@ git push -u origin main
 
 --[_] curl.exe "http://localhost:8080/api/fractals/generate?kind=1&xMin=-2.0&xMax=1.0&yMin=-1.5&yMax=1.5&maxIterations=500"
 
+--[_] curl.exe "http://localhost:8080/api/webServerVersion"
+
+--[_] curl.exe "http://localhost:8080/api/zigVersion"
+
+--[_] curl.exe "http://localhost:8080/api/GenerateRandomVertex_SpringBoot"
+
 ///////////////////////////////////////////////////////////////////////
 --[_] DOCKER
 ///////////////////////////////////////////////////////////////////////

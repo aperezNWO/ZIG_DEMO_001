@@ -1,5 +1,7 @@
 const std = @import("std");
+const builtin = @import("builtin");
 const fractal_engine = @import("fractal_engine.zig");
+const algorithm_manager = @import("algorithm_manager.zig");
 
 fn getQueryParam(uri: []const u8, key: []const u8) ?[]const u8 {
     const q_idx = std.mem.indexOf(u8, uri, "?") orelse return null;
@@ -75,6 +77,50 @@ pub fn main(init: std.process.Init) !void {
                 .status = .ok,
                 .extra_headers = &[_]std.http.Header{
                     .{ .name = "Content-Type", .value = "application/json" },
+                    .{ .name = "Access-Control-Allow-Origin", .value = "https://apereznwo.github.io" },
+                },
+            });
+        } else if (std.mem.startsWith(u8, request.head.target, "/api/zigVersion")) {
+            const version_obj = .{ .zigVersion = builtin.zig_version_string };
+            var allocating_writer = std.Io.Writer.Allocating.init(allocator);
+            defer allocating_writer.deinit();
+            try std.json.Stringify.value(version_obj, .{}, &allocating_writer.writer);
+            const json_slice = try allocating_writer.toOwnedSlice();
+            defer allocator.free(json_slice);
+
+            try request.respond(json_slice, .{
+                .status = .ok,
+                .extra_headers = &[_]std.http.Header{
+                    .{ .name = "Content-Type", .value = "application/json" },
+                    .{ .name = "Access-Control-Allow-Origin", .value = "https://apereznwo.github.io" },
+                },
+            });
+        } else if (std.mem.startsWith(u8, request.head.target, "/api/webServerVersion")) {
+            const server_obj = .{ .webServerVersion = "0.16.0-http" };
+            var allocating_writer = std.Io.Writer.Allocating.init(allocator);
+            defer allocating_writer.deinit();
+            try std.json.Stringify.value(server_obj, .{}, &allocating_writer.writer);
+            const json_slice = try allocating_writer.toOwnedSlice();
+            defer allocator.free(json_slice);
+
+            try request.respond(json_slice, .{
+                .status = .ok,
+                .extra_headers = &[_]std.http.Header{
+                    .{ .name = "Content-Type", .value = "application/json" },
+                    .{ .name = "Access-Control-Allow-Origin", .value = "https://apereznwo.github.io" },
+                },
+            });
+        } else if (std.mem.startsWith(u8, request.head.target, "/GenerateRandomVertex_SpringBoot")) {
+            const result_str = algorithm_manager.AlgorithmManager.runRandomDijkstra(allocator) catch {
+                try request.respond("Internal Server Error", .{ .status = .internal_server_error });
+                continue;
+            };
+            defer allocator.free(result_str);
+
+            try request.respond(result_str, .{
+                .status = .ok,
+                .extra_headers = &[_]std.http.Header{
+                    .{ .name = "Content-Type", .value = "text/plain; charset=utf-8" },
                     .{ .name = "Access-Control-Allow-Origin", .value = "https://apereznwo.github.io" },
                 },
             });
