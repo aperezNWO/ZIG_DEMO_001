@@ -24,6 +24,13 @@ fn getQueryParam(uri: []const u8, key: []const u8) ?[]const u8 {
     return null;
 }
 
+// Standard CORS headers configuration
+const cors_headers = &[_]std.http.Header{
+    .{ .name = "Access-Control-Allow-Origin", .value = "https://apereznwo.github.io" },
+    .{ .name = "Access-Control-Allow-Methods", .value = "GET, POST, OPTIONS" },
+    .{ .name = "Access-Control-Allow-Headers", .value = "Content-Type, Authorization" },
+};
+
 fn handleFractals(allocator: std.mem.Allocator, target: []const u8, request: *std.http.Server.Request) !void {
     const kind_str = getQueryParam(target, "kind") orelse "1";
     const kind_int = std.fmt.parseInt(i32, kind_str, 10) catch 1;
@@ -56,6 +63,8 @@ fn handleFractals(allocator: std.mem.Allocator, target: []const u8, request: *st
         .extra_headers = &[_]std.http.Header{
             .{ .name = "Content-Type", .value = "application/json" },
             .{ .name = "Access-Control-Allow-Origin", .value = "https://apereznwo.github.io" },
+            .{ .name = "Access-Control-Allow-Methods", .value = "GET, POST, OPTIONS" },
+            .{ .name = "Access-Control-Allow-Headers", .value = "Content-Type, Authorization" },
         },
     });
 }
@@ -73,6 +82,8 @@ fn handleZigVersion(allocator: std.mem.Allocator, _: []const u8, request: *std.h
         .extra_headers = &[_]std.http.Header{
             .{ .name = "Content-Type", .value = "application/json" },
             .{ .name = "Access-Control-Allow-Origin", .value = "https://apereznwo.github.io" },
+            .{ .name = "Access-Control-Allow-Methods", .value = "GET, POST, OPTIONS" },
+            .{ .name = "Access-Control-Allow-Headers", .value = "Content-Type, Authorization" },
         },
     });
 }
@@ -90,6 +101,8 @@ fn handleWebServerVersion(allocator: std.mem.Allocator, _: []const u8, request: 
         .extra_headers = &[_]std.http.Header{
             .{ .name = "Content-Type", .value = "application/json" },
             .{ .name = "Access-Control-Allow-Origin", .value = "https://apereznwo.github.io" },
+            .{ .name = "Access-Control-Allow-Methods", .value = "GET, POST, OPTIONS" },
+            .{ .name = "Access-Control-Allow-Headers", .value = "Content-Type, Authorization" },
         },
     });
 }
@@ -103,27 +116,30 @@ fn handleRandomVertex(allocator: std.mem.Allocator, _: []const u8, request: *std
         .extra_headers = &[_]std.http.Header{
             .{ .name = "Content-Type", .value = "text/plain; charset=utf-8" },
             .{ .name = "Access-Control-Allow-Origin", .value = "https://apereznwo.github.io" },
+            .{ .name = "Access-Control-Allow-Methods", .value = "GET, POST, OPTIONS" },
+            .{ .name = "Access-Control-Allow-Headers", .value = "Content-Type, Authorization" },
         },
     });
 }
 
 fn handlePing(_: std.mem.Allocator, _: []const u8, request: *std.http.Server.Request) !void {
-    try request.respond("", .{ .status = .no_content });
+    try request.respond("", .{ .status = .no_content, .extra_headers = cors_headers });
 }
 
 fn handleDefault(_: std.mem.Allocator, _: []const u8, request: *std.http.Server.Request) !void {
     try request.respond("It works!", .{
         .status = .ok,
-        .extra_headers = &[_]std.http.Header{
-            .{ .name = "Access-Control-Allow-Origin", .value = "https://apereznwo.github.io" },
-        },
+        .extra_headers = cors_headers,
     });
 }
+
 const routes = [_]RouteHandler{
     .{ .path = "/api/fractals/generate", .handler = handleFractals },
-    .{ .path = "/api/getzigversion", .handler = handleZigVersion },
+    .{ .path = "/api/zigversion", .handler = handleZigVersion },
+    .{ .path = "/api/zigVersion", .handler = handleZigVersion },
     .{ .path = "/api/getZigVersion", .handler = handleZigVersion },
-    .{ .path = "/api/getzigwebserverVersion", .handler = handleWebServerVersion },
+    .{ .path = "/api/webserverversion", .handler = handleWebServerVersion },
+    .{ .path = "/api/webServerVersion", .handler = handleWebServerVersion },
     .{ .path = "/api/getZigWebServerVersion", .handler = handleWebServerVersion },
     .{ .path = "/api/generaterandomvertex_springboot", .handler = handleRandomVertex },
     .{ .path = "/api/GenerateRandomVertex_SpringBoot", .handler = handleRandomVertex },
@@ -153,6 +169,16 @@ pub fn main(init: std.process.Init) !void {
         var http_server = std.http.Server.init(&stream_reader.interface, &stream_writer.interface);
         
         var request = http_server.receiveHead() catch continue;
+
+        // Handle preflight OPTIONS requests immediately
+        if (request.head.method == .OPTIONS) {
+            request.respond("", .{
+                .status = .no_content,
+                .extra_headers = cors_headers,
+            }) catch continue;
+            continue;
+        }
+
         const target = request.head.target;
         const path = if (std.mem.indexOf(u8, target, "?")) |idx| target[0..idx] else target;
 
@@ -160,7 +186,10 @@ pub fn main(init: std.process.Init) !void {
         for (routes) |route| {
             if (std.mem.eql(u8, path, route.path)) {
                 route.handler(allocator, target, &request) catch {
-                    try request.respond("Internal Server Error", .{ .status = .internal_server_error });
+                    request.respond("Internal Server Error", .{ 
+                        .status = .internal_server_error,
+                        .extra_headers = cors_headers,
+                    }) catch {};
                 };
                 matched = true;
                 break;
@@ -172,4 +201,3 @@ pub fn main(init: std.process.Init) !void {
         }
     }
 }
-
