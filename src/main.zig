@@ -48,7 +48,7 @@ fn handleFractals(allocator: std.mem.Allocator, target: []const u8, request: *st
         .yMin = yMin,
         .yMax = yMax,
     };
-    
+
     const points = try fractal_engine.FractalEngine.getFractal(allocator, kind, bounds, maxIter);
     defer allocator.free(points);
 
@@ -135,14 +135,9 @@ fn handleDefault(_: std.mem.Allocator, _: []const u8, request: *std.http.Server.
 
 const routes = [_]RouteHandler{
     .{ .path = "/api/fractals/generate", .handler = handleFractals },
-    .{ .path = "/api/zigversion", .handler = handleZigVersion },
-    .{ .path = "/api/zigVersion", .handler = handleZigVersion },
-    .{ .path = "/api/getZigVersion", .handler = handleZigVersion },
-    .{ .path = "/api/webserverversion", .handler = handleWebServerVersion },
-    .{ .path = "/api/webServerVersion", .handler = handleWebServerVersion },
-    .{ .path = "/api/getZigWebServerVersion", .handler = handleWebServerVersion },
-    .{ .path = "/api/generaterandomvertex_springboot", .handler = handleRandomVertex },
-    .{ .path = "/api/GenerateRandomVertex_SpringBoot", .handler = handleRandomVertex },
+    .{ .path = "/api/server/getZigVersion", .handler = handleZigVersion },
+    .{ .path = "/api/server/getZigWebServerVersion", .handler = handleWebServerVersion },
+    .{ .path = "/api/Algorithm/GenerateRandomVertex_Zig", .handler = handleRandomVertex },
     .{ .path = "/ping", .handler = handlePing },
 };
 
@@ -167,7 +162,7 @@ pub fn main(init: std.process.Init) !void {
         var stream_reader = conn.reader(io, &read_buffer);
         var stream_writer = conn.writer(io, &write_buffer);
         var http_server = std.http.Server.init(&stream_reader.interface, &stream_writer.interface);
-        
+
         var request = http_server.receiveHead() catch continue;
 
         // Handle preflight OPTIONS requests immediately
@@ -186,7 +181,7 @@ pub fn main(init: std.process.Init) !void {
         for (routes) |route| {
             if (std.mem.eql(u8, path, route.path)) {
                 route.handler(allocator, target, &request) catch {
-                    request.respond("Internal Server Error", .{ 
+                    request.respond("Internal Server Error", .{
                         .status = .internal_server_error,
                         .extra_headers = cors_headers,
                     }) catch {};

@@ -4,7 +4,7 @@
 
 
 ///////////////////////////////////////////////////////////////////////
-// GIT 
+// GIT
 ///////////////////////////////////////////////////////////////////////
 
 echo "# ZIG_DEMO_001" >> README.md
@@ -41,11 +41,11 @@ git push -u origin main
 
 --[_] curl "http://localhost:8080/api/fractals/generate?kind=1&xMin=-2.0&xMax=1.0&yMin=-1.5&yMax=1.5&maxIterations=500"
 
---[_] curl "http://localhost:8080/api/GenerateRandomVertex_SpringBoot"
+--[_] curl "http://localhost:8080/api/Algorithm/GenerateRandomVertex_Zig"
 
---[_] curl "http://localhost:8080/api/getZigWebServerVersion"
+--[_] curl "http://localhost:8080/api/server/getZigWebServerVersion"
 
---[_] curl "http://localhost:8080/api/getZigVersion"
+--[_] curl "http://localhost:8080/api/server/getZigVersion"
 
 --[_] curl "http://localhost:8080/ping"
 
@@ -81,4 +81,14 @@ git push -u origin main
 
 --[_] curl.exe "https://zig-demo-001-latest.onrender.com/api/fractals/generate?kind=1&xMin=-2.0&xMax=1.0&yMin=-1.5&yMax=1.5&maxIterations=500"
 
-///////////////////////////////////////////////////////////////////////    
+///////////////////////////////////////////////////////////////////////
+// GIT
+///////////////////////////////////////////////////////////////////////
+
+git add *
+git commit -m "[Application ZIG_DEMO_001] v[1.0.0]" -m"1) Routes Fix"
+git branch -M main
+git remote add origin https://github.com/aperezNWO/ZIG_DEMO_001.git
+git push -u origin main
+
+///////////////////////////////////////////////////////////////////////
