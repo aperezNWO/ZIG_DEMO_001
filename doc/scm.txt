@@ -49,6 +49,8 @@ git push -u origin main
 
 --[_] curl "http://localhost:8080/ping"
 
+--[_] curl.exe "http://localhost:8080/health"
+
 ///////////////////////////////////////////////////////////////////////
 --[_] DOCKER
 ///////////////////////////////////////////////////////////////////////
@@ -86,9 +88,8 @@ git push -u origin main
 ///////////////////////////////////////////////////////////////////////
 
 git add *
-git commit -m "[Application ZIG_DEMO_001] v[1.0.0]" -m"1) Routes Fix"
-git branch -M main
-git remote add origin https://github.com/aperezNWO/ZIG_DEMO_001.git
-git push -u origin main
+git commit -m "[Application ZIG_DEMO_001] v[1.0.1]" -m"1) Routes Fix"
+git push
+git pull
 
 ///////////////////////////////////////////////////////////////////////
