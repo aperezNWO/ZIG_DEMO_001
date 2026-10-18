@@ -41,6 +41,8 @@ git push -u origin main
 
 --[_] curl "http://localhost:8080/api/fractals/generate?kind=1&xMin=-2.0&xMax=1.0&yMin=-1.5&yMax=1.5&maxIterations=500"
 
+      curl.exe -i "http://localhost:8080/api/Algorithm/GenerateRandomVertex_Zig"
+
 --[_] curl "http://localhost:8080/api/Algorithm/GenerateRandomVertex_Zig"
 
 --[_] curl "http://localhost:8080/api/server/getZigWebServerVersion"
