@@ -171,7 +171,7 @@ fn handleDefault(_: std.mem.Allocator, _: []const u8, request: *std.http.Server.
 }
 
 fn handleAppVersion(_: std.mem.Allocator, _: []const u8, request: *std.http.Server.Request) !void {
-    try request.respond("v[1.0.1]", .{
+    try request.respond("v[1.0.3]", .{
         .status = .ok,
         .extra_headers = cors_headers,
     });
