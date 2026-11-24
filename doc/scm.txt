@@ -2,6 +2,29 @@
 //                               SCM                                 //
 ///////////////////////////////////////////////////////////////////////
 
+///////////////////////////////////////////////////////////////////////
+// DEVCONTAINER
+///////////////////////////////////////////////////////////////////////
+
+ZIG_VERSION="0.17.1"
+curl -L "https://ziglang.org/download/${ZIG_VERSION}/zig-x86_64-linux-${ZIG_VERSION}.tar.xz" -o zig.tar.xz
+tar -xf zig.tar.xz
+sudo mv "zig-x86_64-linux-${ZIG_VERSION}" /usr/local/zig
+sudo ln -sf /usr/local/zig/zig /usr/local/bin/zig
+rm zig.tar.xz
+zig version
+
+.devcontainer/devcontainer.json
+
+{
+  "name": "Zig Backend",
+  "image": "mcr.microsoft.com/devcontainers/base:ubuntu",
+  "postCreateCommand": "ZIG_VERSION=0.17.1 && curl -fsSL https://ziglang.org/download/${ZIG_VERSION}/zig-x86_64-linux-${ZIG_VERSION}.tar.xz -o /tmp/zig.tar.xz && tar -xf /tmp/zig.tar.xz -C /tmp && sudo mv /tmp/zig-x86_64-linux-${ZIG_VERSION} /usr/local/zig && sudo ln -sf /usr/local/zig/zig /usr/local/bin/zig && rm /tmp/zig.tar.xz && zig version"
+}
+
+Commit .devcontainer/devcontainer.json to your GitHub branch, and if you already have an active codespace open, 
+trigger a Codespaces: Rebuild Container from the VS Code Command Palette (Ctrl+Shift+P / Cmd+Shift+P).
+
 
 ///////////////////////////////////////////////////////////////////////
 // GIT
@@ -62,8 +85,14 @@ git push -u origin main
 # Tag for your registry (replace 'yourusername' with your account name)
 --[_] docker tag zig_demo_001:latest apereznwogmail/zig_demo_001:latest
 
-# Log in to your container registry
---[_] docker login
+## (codespaces) - log into docker for publish
+    # get PAT from https://app.docker.com/accounts/apereznwogmail/settings/personal-access-tokens
+    # must return 'Login Succeeded'
+        echo "YOUR_PAT_HERE" | docker login --username apereznwogmail --password-stdin
+
+## (docker desktop) - log into docker for publish
+        docker login
+
 
 # Push the image
 --[_] docker push apereznwogmail/zig_demo_001:latest
@@ -87,9 +116,48 @@ git push -u origin main
 // GIT
 ///////////////////////////////////////////////////////////////////////
 
-git add *
-git commit -m "[Application ZIG_DEMO_001] v[1.0.1]" -m"1) Routes Fix"
-git push
-git pull
+## GIT ACCOUNTS
+
+      --  alejandro.perez.acosta@hotmail.com        - aperezNWO       - main account
+      --  alejandro.perez.acosta@gmail.com (oauth)  - aperezNWOGmial  - secound account (empty)
+      --  df149032@outlook.com                      - Exam70486       - AUX - EMPTY
+
+## LOCAL SETUP
+    
+    git config user.email "alejandro.perez.acosta@hotmail.com"
+    echo "# pwa_demo_env_prod" >> README.md
+    git init
+    git add README.md
+    git commit -m "[Application ZIG_DEMO_001] v[1.0.3]" -m"1) DIJKSTRA FIX."
+    git branch -M main
+
+## REMOTE UPDATE
+    ## PATH 1 - NO EXTERNAL AUTH REQUIRED
+    git config user.email "alejandro.perez.acosta@hotmail.com"
+    echo "# pwa_demo_env_prod" >> README.md
+    git init
+    git remote add origin https://github.com/aperezNWO/ZIG_DEMO_001.git
+    git add *
+    git push -u origin main
+
+    ## PATH 2 - EXTERNAL AUTH REQUIRED
+    ##  Create a new PAT with correct scope
+
+    Go to https://github.com/settings/tokens/new (make sure you're logged in as aperezNWO)
+    Fill in:
+
+    Note: codespaces-write
+    Expiration: 90 days
+    Scopes:
+            ✅ repo (the top-level checkbox — this gives full repo access
+            ✅ workflow
+
+    git config user.email "alejandro.perez.acosta@hotmail.com"
+    git init 
+    git remote add origin https://github.com/aperezNWO/ZIG_DEMO_001.git
+    git remote set-url origin https://aperezNWO:<YOUR_PAT_HERE>@github.com/aperezNWO/ZIG_DEMO_001.git
+    git add *
+    git commit -m "[Application ZIG_DEMO_001] v[1.0.3]" -m"1) DIJKSTRA FIX."
+    git push --set-upstream origin main
 
 ///////////////////////////////////////////////////////////////////////
