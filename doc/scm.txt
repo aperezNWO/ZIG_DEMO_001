@@ -154,10 +154,12 @@ git push -u origin main
 
     git config user.email "alejandro.perez.acosta@hotmail.com"
     git init 
-    git remote add origin https://github.com/aperezNWO/ZIG_DEMO_001.git
     git remote set-url origin https://aperezNWO:<YOUR_PAT_HERE>@github.com/aperezNWO/ZIG_DEMO_001.git
     git add *
     git commit -m "[Application ZIG_DEMO_001] v[1.0.3]" -m"1) DIJKSTRA FIX."
+    git branch -M main
+    git config pull.rebase true   # rebase
+    git pull --set-upstream origin main
     git push --set-upstream origin main
 
 ///////////////////////////////////////////////////////////////////////
