@@ -135,13 +135,13 @@ pub const AlgorithmManager = struct {
             fn parse(s: []u8) struct { x: f64, y: f64 } {
                 var x_val: f64 = 0.0;
                 var y_val: f64 = 0.0;
-                
+
                 var start: usize = 0;
                 while (start < s.len and (s[start] == '[' or s[start] == '|')) start += 1;
-                
+
                 var end = s.len;
                 while (end > start and (s[end - 1] == ']' or s[end - 1] == '|')) end -= 1;
-                
+
                 const core = s[start..end];
                 var it = std.mem.splitScalar(u8, core, ',');
                 if (it.next()) |x_str| {
@@ -245,7 +245,18 @@ pub const AlgorithmManager = struct {
             const v_clean_2 = try replaceAll(allocator, v_clean, "|", "");
             defer allocator.free(v_clean_2);
 
-            const formatted_row = try std.fmt.allocPrint(allocator, "{:02}<{s}>-{:02}-{s}", .{ v, v_clean_2, d, path_str });
+            const v_lt = try replaceAll(allocator, v_clean_2, "<", "&lt;");
+            defer allocator.free(v_lt);
+            const v_escaped = try replaceAll(allocator, v_lt, ">", "&gt;");
+            defer allocator.free(v_escaped);
+
+            const d_unsigned: u32 = @intCast(@max(d, 0));
+
+            const formatted_row = try std.fmt.allocPrint(
+                allocator,
+                "{d:0>2}&lt;{s}&gt;-{d:0>2}-{s}",
+                .{ v, v_escaped, d_unsigned, path_str },
+            );
             try result_rows.append(allocator, formatted_row);
         }
 
