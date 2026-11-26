@@ -22,7 +22,7 @@ zig version
   "postCreateCommand": "ZIG_VERSION=0.17.1 && curl -fsSL https://ziglang.org/download/${ZIG_VERSION}/zig-x86_64-linux-${ZIG_VERSION}.tar.xz -o /tmp/zig.tar.xz && tar -xf /tmp/zig.tar.xz -C /tmp && sudo mv /tmp/zig-x86_64-linux-${ZIG_VERSION} /usr/local/zig && sudo ln -sf /usr/local/zig/zig /usr/local/bin/zig && rm /tmp/zig.tar.xz && zig version"
 }
 
-Commit .devcontainer/devcontainer.json to your GitHub branch, and if you already have an active codespace open, 
+Commit .devcontainer/devcontainer.json to your GitHub branch, and if you already have an active codespace open,
 trigger a Codespaces: Rebuild Container from the VS Code Command Palette (Ctrl+Shift+P / Cmd+Shift+P).
 
 
@@ -125,7 +125,7 @@ git push -u origin main
       --  df149032@outlook.com                      - Exam70486       - AUX - EMPTY
 
 ## LOCAL SETUP
-    
+
     git config user.email "alejandro.perez.acosta@hotmail.com"
     echo "# pwa_demo_env_prod" >> README.md
     git init
@@ -155,7 +155,7 @@ git push -u origin main
             ✅ workflow
 
     git config user.email "alejandro.perez.acosta@hotmail.com"
-    git init 
+    git init
     git remote set-url origin https://aperezNWO:<YOUR_PAT_HERE>@github.com/aperezNWO/ZIG_DEMO_001.git
     git add *
     git commit -m "[Application ZIG_DEMO_001] v[1.0.3]" -m"1) DIJKSTRA FIX."
@@ -163,5 +163,12 @@ git push -u origin main
     git config pull.rebase true   # rebase
     git pull --set-upstream origin main
     git push --set-upstream origin main
+
+///////////////////////////////////////////////////////////////////////
+
+   git add *
+   git commit -m "[Application ZIG_DEMO_001] v[1.0.4]" -m"1) MATH ENGINE."
+   git push
+   git pull
 
 ///////////////////////////////////////////////////////////////////////
