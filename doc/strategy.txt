@@ -4,5 +4,30 @@ ZIG_DEMO_001/
 ├── build.zig.zon
 ├── Dockerfile
 ├── .dockerignore
-└── src/ 
+└── src/
     └── main.zig
+
+    ///////////////////////////////////////////////
+
+    1) Hi Claude. Attached are the files which comoses a zig language backend who has among other functionalities to calculate collision phyciscs. The program is aimed to deliver a wasm file to an angular backend.
+2) The program runs correctly. There are endpoints amied to individually test the collision calculation.
+3) The unit testing of the collision logic runs correctly as is shown in the following command input and output:
+
+$x = 100; $y = 100; $vx = 5; $vy = 0; $cols = 0; 1..10 | ForEach-Object { $raw = curl.exe -s "http://localhost:8080/api/Algorithm/CollisionStep?x=$x&y=$y&vx=$vx&vy=$vy&radius=15&mass=1&gravity=0.5&friction=0.98&restitution=0.8&canvasWidth=500&canvasHeight=300&collisionCount=$cols"; Write-Host "Step ${_}: $raw"; $obj = $raw | ConvertFrom-Json; $x = $obj.x; $y = $obj.y; $vx = $obj.vx; $vy = $obj.vy; $cols = $obj.collisionCount }
+
+Step 1: {"x":105,"y":100.5,"vx":5,"vy":0.5,"speed":5.024937810560445,"kineticEnergy":12.625,"potentialEnergy":99.75,"totalEnergy":112.375,"momentum":5.024937810560445,"collisionCount":0,"stopped":false}
+Step 2: {"x":110,"y":101.5,"vx":5,"vy":1,"speed":5.0990195135927845,"kineticEnergy":12.999999999999998,"potentialEnergy":99.25,"totalEnergy":112.25,"momentum":5.0990195135927845,"collisionCount":0,"stopped":false}
+Step 3: {"x":115,"y":103,"vx":5,"vy":1.5,"speed":5.220153254455275,"kineticEnergy":13.625000000000002,"potentialEnergy":98.5,"totalEnergy":112.125,"momentum":5.220153254455275,"collisionCount":0,"stopped":false}
+Step 4: {"x":120,"y":105,"vx":5,"vy":2,"speed":5.385164807134504,"kineticEnergy":14.499999999999998,"potentialEnergy":97.5,"totalEnergy":112,"momentum":5.385164807134504,"collisionCount":0,"stopped":false}
+Step 5: {"x":125,"y":107.5,"vx":5,"vy":2.5,"speed":5.5901699437494745,"kineticEnergy":15.625000000000002,"potentialEnergy":96.25,"totalEnergy":111.875,"momentum":5.5901699437494745,"collisionCount":0,"stopped":false}
+Step 6: {"x":130,"y":110.5,"vx":5,"vy":3,"speed":5.830951894845301,"kineticEnergy":17,"potentialEnergy":94.75,"totalEnergy":111.75,"momentum":5.830951894845301,"collisionCount":0,"stopped":false}
+Step 7: {"x":135,"y":114,"vx":5,"vy":3.5,"speed":6.103277807866851,"kineticEnergy":18.624999999999996,"potentialEnergy":93,"totalEnergy":111.625,"momentum":6.103277807866851,"collisionCount":0,"stopped":false}
+Step 8: {"x":140,"y":118,"vx":5,"vy":4,"speed":6.4031242374328485,"kineticEnergy":20.5,"potentialEnergy":91,"totalEnergy":111.5,"momentum":6.4031242374328485,"collisionCount":0,"stopped":false}
+Step 9: {"x":145,"y":122.5,"vx":5,"vy":4.5,"speed":6.726812023536855,"kineticEnergy":22.625,"potentialEnergy":88.75,"totalEnergy":111.375,"momentum":6.726812023536855,"collisionCount":0,"stopped":false}
+Step 10: {"x":150,"y":127.5,"vx":5,"vy":5,"speed":7.0710678118654755,"kineticEnergy":25.000000000000004,"potentialEnergy":86.25,"totalEnergy":111.25,"momentum":7.0710678118654755,"collisionCount":0,"stopped":false}
+
+4) Turns out that the unit testing evaluation of the wasm file always return false asserts. ¿Could you please help me to determine if there is something wrong with the unit tesing desing or if it a wasm file problem? The input/ouput of the wasm unit testing is as follows (output attached)
+
+http://localhost:8080/api/Algorithm/TestWasm
+
+///////////////////////////////////////////////
