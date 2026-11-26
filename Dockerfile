@@ -20,6 +20,7 @@ WORKDIR /app
 # Copy compiled server binary and Wasm module from builder
 COPY --from=builder /app/zig-out/bin/ZIG_DEMO_001 /app/fractal-server
 COPY --from=builder /app/zig-out/bin/collision_engine.wasm /app/zig-out/bin/collision_engine.wasm
+COPY --from=builder /app/zig-out/bin/collision_engine.wasm /app/collision_engine.wasm
 
 EXPOSE 8080
 
