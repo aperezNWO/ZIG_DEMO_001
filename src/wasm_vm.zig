@@ -50,6 +50,7 @@ pub const SimulationRunResult = struct {
     steps: [10]WasmPhysicsSnapshot,
     unsupported_opcode: ?u8 = null,
     unsupported_sub_opcode: ?u32 = null,
+    vm_error: ?[]const u8 = null,
 };
 
 fn readU32Leb(bytes: []const u8, pos: *usize) !u32 {
@@ -413,9 +414,10 @@ pub const WasmInstance = struct {
                         }
                     }
                 },
-                0x05 => { // else (reached only from true branch; jump to end and let 0x0b pop the frame)
+                0x05 => { // else (reached only from the true branch): skip the else body AND its `end`
                     if (frames.items.len > 0) {
-                        pc = frames.items[frames.items.len - 1].end_pc;
+                        // end_pc is past the `end` opcode, so pop the frame ourselves
+                        pc = frames.pop().?.end_pc;
                     }
                 },
                 0x0b => { // end
@@ -437,8 +439,9 @@ pub const WasmInstance = struct {
                             frames.shrinkRetainingCapacity(target_idx + 1);
                             pc = target.start_pc;
                         } else {
-                            // Keep target frame until the 0x0b at target.end_pc pops it
-                            frames.shrinkRetainingCapacity(target_idx + 1);
+                            // end_pc is the position AFTER the target's `end` opcode, so that `end`
+                            // is skipped and will never pop the frame: remove it here instead.
+                            frames.shrinkRetainingCapacity(target_idx);
                             pc = target.end_pc;
                         }
                     }
@@ -511,6 +514,19 @@ pub const WasmInstance = struct {
                     const base: usize = @intCast(@as(u32, @bitCast(stack.pop().?.i32)));
                     const bits = std.mem.readInt(u64, self.memory[base + offset ..][0..8], .little);
                     try stack.append(self.allocator, .{ .f64 = @bitCast(bits) });
+                },
+                0x2d => { // i32.load8_u  (needed for Zig `bool` fields)
+                    _ = try readU32Leb(body.code, &pc); // align
+                    const offset: usize = @intCast(try readU32Leb(body.code, &pc));
+                    const base: usize = @intCast(@as(u32, @bitCast(stack.pop().?.i32)));
+                    try stack.append(self.allocator, .{ .i32 = self.memory[base + offset] });
+                },
+                0x3a => { // i32.store8  (needed for Zig `bool` fields)
+                    _ = try readU32Leb(body.code, &pc); // align
+                    const offset: usize = @intCast(try readU32Leb(body.code, &pc));
+                    const val = stack.pop().?.i32;
+                    const base: usize = @intCast(@as(u32, @bitCast(stack.pop().?.i32)));
+                    self.memory[base + offset] = @truncate(@as(u32, @bitCast(val)));
                 },
                 0x36 => { // i32.store
                     _ = try readU32Leb(body.code, &pc);
@@ -777,7 +793,8 @@ pub fn runTenStepSimulationTest(allocator: std.mem.Allocator, wasm_bytes: []cons
     var vy: f64 = 0.0;
     var cols: i32 = 0;
 
-    var steps: [10]WasmPhysicsSnapshot = undefined;
+    // zero-init: if the VM fails before filling a step, we must not report uninitialised (0xAA) memory
+    var steps: [10]WasmPhysicsSnapshot = std.mem.zeroes([10]WasmPhysicsSnapshot);
 
     for (0..10) |i| {
         const step_args = [_]Val{
@@ -794,12 +811,13 @@ pub fn runTenStepSimulationTest(allocator: std.mem.Allocator, wasm_bytes: []cons
             .{ .f64 = 300.0 },
             .{ .i32 = cols },
         };
-        _ = vm.callExport("stepSimulation", &step_args) catch {
+        _ = vm.callExport("stepSimulation", &step_args) catch |err| {
             return .{
                 .passed = false,
                 .steps = steps,
                 .unsupported_opcode = vm.last_unsupported_opcode,
                 .unsupported_sub_opcode = vm.last_unsupported_sub_opcode,
+                .vm_error = @errorName(err),
             };
         };
         const ptr_val = (try vm.callExport("getStatePtr", &.{})).?.i32;
