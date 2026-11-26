@@ -1,6 +1,6 @@
-# Stage 1: Build the Zig binary
+# Stage 1: Build the Zig binary and Wasm module
 FROM alpine:latest AS builder
-RUN apk add --no-cache curl bash
+RUN apk add --no-cache curl bash xz
 # Download and extract Zig 0.16.0 (or match your local development version)
 ARG ZIG_VERSION=0.16.0
 RUN curl -L https://ziglang.org/download/${ZIG_VERSION}/zig-x86_64-linux-${ZIG_VERSION}.tar.xz -o zig.tar.xz && \
@@ -10,15 +10,16 @@ RUN curl -L https://ziglang.org/download/${ZIG_VERSION}/zig-x86_64-linux-${ZIG_V
 WORKDIR /app
 COPY . .
 
-# Build release-optimized binary
+# Build release-optimized binary (and wasm step if wired in build.zig)
 RUN /opt/zig/zig build -Doptimize=ReleaseFast
 
 # Stage 2: Runtime Environment
 FROM alpine:latest
 WORKDIR /app
 
-# Copy compiled binary and any required assets from builder
+# Copy compiled server binary and Wasm module from builder
 COPY --from=builder /app/zig-out/bin/ZIG_DEMO_001 /app/fractal-server
+COPY --from=builder /app/zig-out/bin/collision_engine.wasm /app/zig-out/bin/collision_engine.wasm
 
 EXPOSE 8080
 
