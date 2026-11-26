@@ -250,7 +250,7 @@ fn handleDefault(_: std.mem.Allocator, _: []const u8, request: *std.http.Server.
 }
 
 fn handleAppVersion(_: std.mem.Allocator, _: []const u8, request: *std.http.Server.Request) !void {
-    try respondWithHeaders(request, .ok, "v[1.0.4]", null);
+    try respondWithHeaders(request, .ok, "v[1.0.5]", null);
 }
 
 const endpointDictionary = [_]EndpointEntry{
