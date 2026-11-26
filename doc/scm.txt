@@ -58,6 +58,14 @@ git push -u origin main
 
             --[_] zig build run
 
+     --[_] build web assembly. It does not interfere with exe file.
+
+           --[_] zig build wasm
+
+            Get-ChildItem -Path .\zig-out, .\.zig-cache, ..\PWA_DEMO_ENV_PROD -Filter "collision_engine.wasm" -Recurse -ErrorAction SilentlyContinue | Select-Object FullName, Length, LastWriteTime
+
+            D:\usuarios\pabloperez\dev\zig\ZIG_DEMO_001\zig-out\bin\collision_engine.wasm
+
 ///////////////////////////////////////////////////////////////////////
 --[_] LOCAL TEST (powershell -- curl.exe) / (bash -- curl)
 ///////////////////////////////////////////////////////////////////////
